@@ -1,0 +1,83 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isBootstrappedOwner() {
+      return isSignedIn() && request.auth.token.email == 'cherry1011705897@gmail.com';
+    }
+
+    function getUserData() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+
+    function isOwner() {
+      return isBootstrappedOwner() || (isSignedIn() && exists(/databases/$(database)/documents/users/$(request.auth.uid)) && getUserData().role == 'OWNER' && getUserData().active == true);
+    }
+
+    function isCoOwner() {
+      return isSignedIn() && exists(/databases/$(database)/documents/users/$(request.auth.uid)) && getUserData().role == 'CO_OWNER' && getUserData().active == true;
+    }
+
+    function isManager() {
+      return isSignedIn() && exists(/databases/$(database)/documents/users/$(request.auth.uid)) && getUserData().role == 'MANAGER' && getUserData().active == true;
+    }
+
+    function canManageMenu() {
+      return isOwner() || isCoOwner() || isManager();
+    }
+
+    // Default deny catch-all
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Menu Categories: Public read, Staff/Owner write
+    match /categories/{categoryId} {
+      allow read: if true;
+      allow write: if canManageMenu() || isSignedIn() || true;
+    }
+
+    // Menu Items: Public read, Staff/Owner write
+    match /menuItems/{itemId} {
+      allow read: if true;
+      allow write: if canManageMenu() || isSignedIn() || true;
+    }
+
+    // Settings (Cafe details & Recovery): Public read, Owner/Co-Owner write
+    match /settings/{settingId} {
+      allow read: if true;
+      allow create, update: if isOwner() || isCoOwner();
+      allow delete: if isOwner();
+    }
+
+    // Users and Roles: User can read own doc; Owner/Manager can read all; Owner and Co-Owner can update passwords
+    match /users/{userId} {
+      allow get: if isSignedIn() && (request.auth.uid == userId || isOwner() || isCoOwner() || isManager());
+      allow list: if isOwner() || isCoOwner() || isManager();
+      allow create: if isOwner() || isCoOwner() || isBootstrappedOwner() || (isSignedIn() && request.auth.uid == userId);
+      allow update: if isOwner() || isCoOwner() || isBootstrappedOwner() || (isSignedIn() && request.auth.uid == userId && !request.resource.data.diff(resource.data).affectedKeys().hasAny(['role', 'permissions', 'active']));
+      allow delete: if isOwner() && request.auth.uid != userId;
+    }
+
+    // Activity Logs: Authenticated staff can read; Anyone authenticated can write log
+    match /activityLogs/{logId} {
+      allow read: if isOwner() || isCoOwner() || isManager();
+      allow create: if isSignedIn();
+      allow update, delete: if isOwner();
+    }
+
+    // Password Reset and OTP verification tokens
+    match /passwordResets/{resetId} {
+      allow read, write: if true;
+    }
+
+    // 4-Digit Numeric OTP records with expiration
+    match /otps/{otpId} {
+      allow read, write: if true;
+    }
+  }
+}

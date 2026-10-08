@@ -1,0 +1,6 @@
+{
+  "name": "The Chai Den - Premium Cafe Digital Menu",
+  "description": "Authentic digital menu card and management system for The Chai Den Premium Cafe.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

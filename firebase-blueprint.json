@@ -1,0 +1,143 @@
+{
+  "entities": {
+    "Category": {
+      "title": "Category",
+      "description": "Menu category representation",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string", "maxLength": 100 },
+        "color": { "type": "string", "maxLength": 30 },
+        "image": { "type": "string", "maxLength": 500 },
+        "displayOrder": { "type": "number" },
+        "active": { "type": "boolean" },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["name", "displayOrder", "active"]
+    },
+    "MenuItem": {
+      "title": "MenuItem",
+      "description": "Product or drink item on the menu",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string", "maxLength": 120 },
+        "categoryId": { "type": "string", "maxLength": 64 },
+        "price": { "type": "number" },
+        "description": { "type": "string", "maxLength": 300 },
+        "image": { "type": "string", "maxLength": 500 },
+        "isNew": { "type": "boolean" },
+        "isVeg": { "type": "boolean" },
+        "active": { "type": "boolean" },
+        "displayOrder": { "type": "number" },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["name", "categoryId", "price", "active"]
+    },
+    "User": {
+      "title": "User",
+      "description": "User profile with role and granular permissions",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "maxLength": 128 },
+        "name": { "type": "string", "maxLength": 100 },
+        "email": { "type": "string", "maxLength": 150 },
+        "role": { "type": "string", "enum": ["OWNER", "CO_OWNER", "MANAGER", "STAFF"] },
+        "active": { "type": "boolean" },
+        "createdAt": { "type": "string" },
+        "lastLogin": { "type": "string" }
+      },
+      "required": ["userId", "name", "email", "role", "active"]
+    },
+    "Settings": {
+      "title": "Settings",
+      "description": "Cafe global settings and recovery emails",
+      "type": "object",
+      "properties": {
+        "restaurantName": { "type": "string", "maxLength": 100 },
+        "primaryOwnerEmail": { "type": "string", "maxLength": 150 },
+        "backupEmail": { "type": "string", "maxLength": 150 },
+        "backupEmailVerified": { "type": "boolean" },
+        "publicMenuUrl": { "type": "string", "maxLength": 300 },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["restaurantName", "primaryOwnerEmail"]
+    },
+    "ActivityLog": {
+      "title": "ActivityLog",
+      "description": "Auditing and management event log",
+      "type": "object",
+      "properties": {
+        "logId": { "type": "string", "maxLength": 128 },
+        "userId": { "type": "string", "maxLength": 128 },
+        "userEmail": { "type": "string", "maxLength": 150 },
+        "action": { "type": "string", "maxLength": 100 },
+        "target": { "type": "string", "maxLength": 200 },
+        "timestamp": { "type": "string" }
+      },
+      "required": ["userId", "action", "timestamp"]
+    },
+    "PasswordReset": {
+      "title": "PasswordReset",
+      "description": "Secure password reset OTP session",
+      "type": "object",
+      "properties": {
+        "email": { "type": "string", "maxLength": 150 },
+        "otp_hash": { "type": "string", "maxLength": 128 },
+        "expires_at": { "type": "number" },
+        "attempts": { "type": "number" },
+        "used": { "type": "boolean" },
+        "created_at": { "type": "string" }
+      },
+      "required": ["email", "otp_hash", "expires_at"]
+    },
+    "Otp": {
+      "title": "Otp",
+      "description": "4-digit numeric OTP record with expiration timestamp",
+      "type": "object",
+      "properties": {
+        "email": { "type": "string", "maxLength": 150 },
+        "otp": { "type": "string", "maxLength": 10 },
+        "otp_hash": { "type": "string", "maxLength": 128 },
+        "expires_at": { "type": "number" },
+        "expires_at_iso": { "type": "string" },
+        "created_at": { "type": "string" },
+        "attempts": { "type": "number" },
+        "used": { "type": "boolean" }
+      },
+      "required": ["email", "otp", "expires_at"]
+    }
+  },
+  "firestore": {
+    "/categories/{categoryId}": {
+      "schema": { "$ref": "Category" },
+      "description": "Chai Den menu categories"
+    },
+    "/menuItems/{itemId}": {
+      "schema": { "$ref": "MenuItem" },
+      "description": "Chai Den menu drink items and prices"
+    },
+    "/users/{userId}": {
+      "schema": { "$ref": "User" },
+      "description": "User profiles and RBAC settings"
+    },
+    "/settings/{settingId}": {
+      "schema": { "$ref": "Settings" },
+      "description": "Cafe settings and recovery backup email"
+    },
+    "/activityLogs/{logId}": {
+      "schema": { "$ref": "ActivityLog" },
+      "description": "Action logs for changes and security"
+    },
+    "/passwordResets/{resetId}": {
+      "schema": { "$ref": "PasswordReset" },
+      "description": "Password reset OTP tokens"
+    },
+    "/otps/{otpId}": {
+      "schema": { "$ref": "Otp" },
+      "description": "4-digit numeric OTP records with expiration timestamps"
+    }
+  }
+}

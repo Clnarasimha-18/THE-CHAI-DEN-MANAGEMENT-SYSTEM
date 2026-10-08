@@ -1,0 +1,87 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --gold-primary: #dfb76c;
+    --gold-light: #f5e29f;
+    --gold-dark: #b8860b;
+    --bg-coffee-dark: #120904;
+    --bg-coffee-card: #1c0e07;
+  }
+
+  body {
+    background-color: #0e0603;
+    color: #f5efe6;
+    font-family: 'Outfit', sans-serif;
+  }
+}
+
+.font-cinzel {
+  font-family: 'Cinzel', serif;
+}
+
+.font-cinzel-dec {
+  font-family: 'Cinzel Decorative', serif;
+}
+
+.font-playfair {
+  font-family: 'Playfair Display', serif;
+}
+
+.font-cormorant {
+  font-family: 'Cormorant Garamond', serif;
+}
+
+.font-outfit {
+  font-family: 'Outfit', sans-serif;
+}
+
+/* Luxury gold text gradient */
+.text-gold-gradient {
+  background: linear-gradient(135deg, #fce09b 0%, #dfb76c 50%, #9e782f 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.text-gold-bright {
+  background: linear-gradient(135deg, #fff3c4 0%, #f4d068 50%, #cca134 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Luxury border styles */
+.border-gold-frame {
+  border: 2px solid #c59b41;
+  box-shadow: 0 0 15px rgba(223, 183, 108, 0.15), inset 0 0 15px rgba(223, 183, 108, 0.08);
+}
+
+.border-gold-subtle {
+  border: 1px solid rgba(223, 183, 108, 0.35);
+}
+
+.border-gold-double {
+  border: 3px double #dfb76c;
+}
+
+/* Dotted menu leader */
+.dotted-leader {
+  flex-grow: 1;
+  border-bottom: 2px dotted rgba(223, 183, 108, 0.4);
+  margin: 0 8px;
+  position: relative;
+  top: -4px;
+}
+
+/* Print styling */
+@media print {
+  body {
+    background-color: white !important;
+    color: black !important;
+  }
+  .no-print {
+    display: none !important;
+  }
+  .print-only {
+    display: block !important;
+  }
+}
